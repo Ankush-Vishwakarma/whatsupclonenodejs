@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+
+.body{
+  background-color:#D5E7E6;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -12,7 +16,6 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -36,3 +39,75 @@
     transform: rotate(360deg);
   }
 }
+
+
+.css-12i7wg6-MuiPaper-root-MuiDrawer-paper {
+
+  background-color: #327874 !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+}
+
+@media (hover: none) {
+ 
+      .css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root:hover{
+
+        background-color: none !important;
+
+      }
+    }
+    .css-1llfw5u-MuiListItemIcon-root {
+    min-width: 0 !important;
+    }@media (hover: none) {
+
+          .css-1hq1sto-MuiButtonBase-root-MuiListItem-root.Mui-selected:hover {
+              background-color:#38A29D !important;
+              color: white !important;
+              /* padding-inline: 10px; */
+          }
+      }
+
+      .css-1hq1sto-MuiButtonBase-root-MuiListItem-root.Mui-selected {
+      background-color: transparent !important;
+      }
+
+
+      .css-vfrypx-MuiListItemIcon-root {
+        margin-left: 40px !important;
+      }
+      .css-ot1n8l-MuiListItemIcon-root{
+        margin-left: 40px !important;
+        color: white !important;
+      }
+
+      /* .css-vfrypx-MuiListItemIcon-root{
+        min-width: 0px !important ;
+      }
+
+      .css-ot1n8l-MuiListItemIcon-root{
+        min-width: 0px !important ;
+      } */
+
+
+      .css-1ex1afd-MuiTableCell-root{
+        padding: 0!important;
+        border-bottom:none !important
+      }
+
+      .css-1ygcj2i-MuiTableCell-roo{
+        padding: 0!important;
+        border-bottom:none !important
+      }
+
+      .css-1ygcj2i-MuiTableCell-root{
+padding: 0 !important;
+      }
+
+
+      .css-1b8vcdv-MuiButtonBase-root-MuiButton-root{
+        text-transform: none !important;
+      }
+
+      .css-w1usjx-MuiGrid-root{
+      
+      }

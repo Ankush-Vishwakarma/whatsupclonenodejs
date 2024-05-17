@@ -1,70 +1,848 @@
-# Getting Started with Create React App
+import React, { useState, useEffect } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import Checkbox from '@mui/material/Checkbox';
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+const sample = [
+  ['Document ', '5 Oct 2022', 'Download Link 1', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 2', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another re', '5 Oct 2022', 'Download Link 3', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Document 4', '5 Oct 2022', 'Download Link 4', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 5', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+];
 
-## Available Scripts
+function createData(id, title, uploadedOn, download, ...additionalData) {
+  return { id, title, uploadedOn, download, additionalData };
+}
 
-In the project directory, you can run:
+const columns = [
+  {
+    width: 150,
+    label: 'TITLE',
+    dataKey: 'title',
+  },
+  {
+    width: 150,
+    label: 'UPLOADED ON',
+    dataKey: 'uploadedOn',
+  },
+  {
+    width: 150,
+    label: 'DOWNLOAD',
+    dataKey: 'download',
+  },
+  // Additional columns
+  {
+    width: 150,
+    label: 'Data 1',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 2',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 3',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 4',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 5',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 6',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 7',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 8',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 9',
+    dataKey: 'additionalData',
+  },
+];
 
-### `npm start`
+const rows = sample.map((row, index) => createData(index, ...row));
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+function ReactVirtualizedTable() {
+  const [tableWidth, setTableWidth] = useState(0);
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  useEffect(() => {
+    const updateWidth = () => {
+      const table = document.getElementById('table');
+      if (table) {
+        setTableWidth(table.offsetWidth);
+      }
+    };
 
-### `npm test`
+    window.addEventListener('resize', updateWidth);
+    updateWidth();
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+    };
+  }, [tableWidth]);
 
-### `npm run build`
+  const paperStyle = {
+    backgroundColor: 'initial',
+    color: 'rgba(0, 0, 0, 0.87)',
+    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    borderRadius: '4px',
+    boxShadow: 'none',
+  };
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  const tableContainerStyle = {
+    margin: '10px',
+    width: tableWidth <= window.innerWidth * 0.96 ? '100%' : '96%',
+    overflow: tableWidth <= window.innerWidth * 0.96 ? 'auto' : 'hidden',
+    height: '500px', 
+  };
+  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  return (
+    <Paper elevation={0} style={paperStyle}>
+      <div style={tableContainerStyle}>
+        <Table id="table" style={{ minWidth: '1600px' }}>
+          <TableHead>
+            <TableRow style={{ backgroundColor: '#D3ECEA' }}>
+              <TableCell style={{ position: 'sticky', top: 0,}}>
+                <Checkbox checked={false} disabled />
+              </TableCell>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.dataKey}
+                  align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    padding: '10px',
+                    width: column.width,
+                    borderBottom: 'none',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: '#D3ECEA',
+                  }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => <RowContent key={index} row={row} rowIndex={index} />)}
+          </TableBody>
+        </Table>
+      </div>
+    </Paper>
+  );
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+function RowContent({ row, rowIndex }) {
+  const textPadding = {
+    paddingLeft: '10px',
+  };
 
-### `npm run eject`
+  const backgroundColor = rowIndex % 2 === 0 ? 'white' : '#EAFDFC';
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return (
+    <TableRow style={{ backgroundColor }}>
+      <TableCell>
+        <Checkbox checked={false} disabled />
+      </TableCell>
+      {columns.map((column, columnIndex) => (
+        <TableCell
+          key={column.dataKey + rowIndex}
+          align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+          style={{
+            padding: '0px',
+            margin: '0px',
+            borderBottom: 'none',
+          }}
+        >
+          {columnIndex === columns.length - 1 ? (
+            <IconButton aria-label="more">
+              {/* <MoreVertIcon style={{ color: 'black' }} /> */}
+            </IconButton>
+          ) : (
+            <span style={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? textPadding : {}}>
+              {column.dataKey === 'additionalData' ? row.additionalData[columnIndex - 3] : row[column.dataKey]}
+            </span>
+          )}
+          {columnIndex === 10 && <MoreVertIcon />}
+          {columnIndex === 11 && <ChevronRightRoundedIcon />}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+export default ReactVirtualizedTable;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+import React, { useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import StarIcon from '@mui/icons-material/Star';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import Checkbox from '@mui/material/Checkbox';
+
+const sample = [
+  ['Document ', '5 Oct 2022', 'Download Link 1', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 2', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another re', '5 Oct 2022', 'Download Link 3', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Document 4', '5 Oct 2022', 'Download Link 4', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 5', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+];
+
+function createData(id, title, uploadedOn, download, ...additionalData) {
+  return { id, title, uploadedOn, download, additionalData };
+}
+
+const columns = [
+  {
+    width: 150,
+    label: 'TITLE',
+    dataKey: 'title',
+  },
+  {
+    width: 150,
+    label: 'UPLOADED ON',
+    dataKey: 'uploadedOn',
+  },
+  {
+    width: 150,
+    label: 'DOWNLOAD',
+    dataKey: 'download',
+  },
+  // Additional columns
+  {
+    width: 150,
+    label: 'Data 1',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 2',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 3',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 4',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 5',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 6',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 7',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 8',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 9',
+    dataKey: 'additionalData',
+  },
+];
+
+const rows = sample.map((row, index) => createData(index, ...row));
+
+function ReactVirtualizedTable() {
+  const paperStyle = {
+    backgroundColor: 'initial',
+    color: 'rgba(0, 0, 0, 0.87)',
+    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    borderRadius: '4px',
+    boxShadow: 'none',
+  };
+
+  const tableContainerStyle = {
+    margin: '10px',
+    width: '96%', 
+    overflowX: 'scroll', 
+    height: '500px', 
+    overflowY: 'auto' 
+  };
+  
+  return (
+    <Paper elevation={0} style={paperStyle}>
+      <div style={tableContainerStyle}>
+        <Table style={{ minWidth: '1600px' }}>
+          <TableHead>
+            <TableRow style={{ backgroundColor: '#D3ECEA' }}>
+              <TableCell style={{ position: 'sticky', top: 0,}}>
+                <Checkbox checked={false} disabled />
+              </TableCell>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.dataKey}
+                  align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    padding: '10px',
+                    width: column.width,
+                    borderBottom: 'none',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: '#D3ECEA',
+                  }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => <RowContent key={index} row={row} rowIndex={index} />)}
+          </TableBody>
+        </Table>
+      </div>
+    </Paper>
+  );
+}
+
+function RowContent({ row, rowIndex }) {
+  const textPadding = {
+    paddingLeft: '10px',
+  };
+
+  const backgroundColor = rowIndex % 2 === 0 ? 'white' : '#EAFDFC';
+
+  return (
+    <TableRow style={{ backgroundColor }}>
+      <TableCell>
+        <Checkbox checked={false} disabled />
+      </TableCell>
+      {columns.map((column, columnIndex) => (
+        <TableCell
+          key={column.dataKey + rowIndex}
+          align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+          style={{
+            padding: '0px',
+            margin: '0px',
+            borderBottom: 'none',
+          }}
+        >
+          {columnIndex === columns.length - 1 ? (
+            <IconButton aria-label="more">
+              {/* <MoreVertIcon style={{ color: 'black' }} /> */}
+            </IconButton>
+          ) : (
+            <span style={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? textPadding : {}}>
+              {column.dataKey === 'additionalData' ? row.additionalData[columnIndex - 3] : row[column.dataKey]}
+            </span>
+          )}
+          {columnIndex === 10 && <MoreVertIcon />}
+          {columnIndex === 11 && <ChevronRightRoundedIcon />}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
+export default ReactVirtualizedTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+import React, { useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import StarIcon from '@mui/icons-material/Star';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import Checkbox from '@mui/material/Checkbox';
+
+const sample = [
+  ['Document ', '5 Oct 2022', 'Download Link 1', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 2', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another re', '5 Oct 2022', 'Download Link 3', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Document 4', '5 Oct 2022', 'Download Link 4', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 5', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+];
+
+function createData(id, title, uploadedOn, download, ...additionalData) {
+  return { id, title, uploadedOn, download, additionalData };
+}
+
+const columns = [
+  {
+    width: 150,
+    label: 'TITLE',
+    dataKey: 'title',
+  },
+  {
+    width: 150,
+    label: 'UPLOADED ON',
+    dataKey: 'uploadedOn',
+  },
+  {
+    width: 150,
+    label: 'DOWNLOAD',
+    dataKey: 'download',
+  },
+  // Additional columns
+  {
+    width: 150,
+    label: 'Data 1',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 2',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 3',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 4',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 5',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 6',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 7',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 8',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 9',
+    dataKey: 'additionalData',
+  },
+];
+
+const rows = sample.map((row, index) => createData(index, ...row));
+
+function ReactVirtualizedTable() {
+  const paperStyle = {
+    backgroundColor: 'initial',
+    color: 'rgba(0, 0, 0, 0.87)',
+    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    borderRadius: '4px',
+    boxShadow: 'none',
+  };
+
+  const tableContainerStyle = {
+    margin: '10px',
+    width: '96%', 
+    overflowX: 'auto',
+    height: '200px',
+    overflowY: 'auto' 
+  };
+
+  return (
+    <Paper elevation={0} style={paperStyle}>
+      <div style={tableContainerStyle}>
+        <Table style={{ minWidth: '1600px' }}>
+          <TableHead>
+            <TableRow style={{ backgroundColor: '#D3ECEA' }}>
+              <TableCell style={{ position: 'sticky', top: 0,}}>
+                <Checkbox checked={false} disabled />
+              </TableCell>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.dataKey}
+                  align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    padding: '10px',
+                    width: column.width,
+                    borderBottom: 'none',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: '#D3ECEA',
+                  }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => <RowContent key={index} row={row} rowIndex={index} />)}
+          </TableBody>
+        </Table>
+      </div>
+    </Paper>
+  );
+}
+
+function RowContent({ row, rowIndex }) {
+  const textPadding = {
+    paddingLeft: '10px',
+  };
+
+  const backgroundColor = rowIndex % 2 === 0 ? 'white' : '#EAFDFC';
+
+  return (
+    <TableRow style={{ backgroundColor }}>
+      <TableCell>
+        <Checkbox checked={false} disabled />
+      </TableCell>
+      {columns.map((column, columnIndex) => (
+        <TableCell
+          key={column.dataKey + rowIndex}
+          align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+          style={{
+            padding: '0px',
+            margin: '0px',
+            borderBottom: 'none',
+          }}
+        >
+          {columnIndex === columns.length - 1 ? (
+            <IconButton aria-label="more">
+              {/* <MoreVertIcon style={{ color: 'black' }} /> */}
+            </IconButton>
+          ) : (
+            <span style={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? textPadding : {}}>
+              {column.dataKey === 'additionalData' ? row.additionalData[columnIndex - 3] : row[column.dataKey]}
+            </span>
+          )}
+          {columnIndex === 10 && <MoreVertIcon />}
+          {columnIndex === 11 && <ChevronRightRoundedIcon />}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
+export default ReactVirtualizedTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------
+
+
+import React, { useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import Checkbox from '@mui/material/Checkbox';
+import { Box } from '@mui/material';
+
+const sample = [
+  ['Document ', '5 Oct 2022', 'Download Link 1', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 2', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another re', '5 Oct 2022', 'Download Link 3', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Document 4', '5 Oct 2022', 'Download Link 4', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+  ['Another ', '5 Oct 2022', 'Download Link 5', 'Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7', ],
+];
+
+function createData(id, title, uploadedOn, download, ...additionalData) {
+  return { id, title, uploadedOn, download, additionalData };
+}
+
+const columns = [
+  {
+    width: 150,
+    label: 'TITLE',
+    dataKey: 'title',
+  },
+  {
+    width: 150,
+    label: 'UPLOADED ON',
+    dataKey: 'uploadedOn',
+  },
+  {
+    width: 150,
+    label: 'DOWNLOAD',
+    dataKey: 'download',
+  },
+  // Additional columns
+  {
+    width: 150,
+    label: 'Data 1',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 2',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 3',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 4',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 5',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 6',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 7',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 8',
+    dataKey: 'additionalData',
+  },
+  {
+    width: 150,
+    label: 'Data 9',
+    dataKey: 'additionalData',
+  },
+];
+
+const rows = sample.map((row, index) => createData(index, ...row));
+
+function ReactVirtualizedTable() {
+  const paperStyle = {
+    backgroundColor: 'initial',
+    color: 'rgba(0, 0, 0, 0.87)',
+    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    borderRadius: '4px',
+    boxShadow: 'none',
+   
+  };
+  const boxStyle = {
+    width: "100%",
+    border: "2px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    display: "flex",
+    justifyContent: "center", // Center horizontally
+    alignItems: "center", // Center vertically
+  };
+  
+  const tableContainerStyle = {
+    // margin: '10px',
+    width:"95%",
+    overflowX: 'scroll',
+    height: '500px',
+    overflowY: 'auto' ,
+
+   
+  };
+
+  return (
+    <Paper elevation={0} style={paperStyle}>
+   
+     <Box sx={boxStyle}>
+     <div style={tableContainerStyle}>
+        <Table style={{ minWidth: '1600px' }}>
+          <TableHead>
+            <TableRow style={{ backgroundColor: '#D3ECEA' }}>
+              <TableCell style={{ position: 'sticky', top: 0, zIndex: 1 }}>
+                <Checkbox checked={false} disabled />
+              </TableCell>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.dataKey}
+                  align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    padding: '10px',
+                    width: column.width,
+                    borderBottom: 'none',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: '#D3ECEA',
+                  }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => <RowContent key={index} row={row} rowIndex={index} />)}
+          </TableBody>
+        </Table>
+      </div>
+     </Box>
+    
+    </Paper>
+  );
+}
+
+function RowContent({ row, rowIndex }) {
+  const textPadding = {
+    paddingLeft: '10px',
+  };
+
+  const backgroundColor = rowIndex % 2 === 0 ? 'white' : '#EAFDFC';
+
+  return (
+    <TableRow style={{ backgroundColor }}>
+      <TableCell>
+        <Checkbox checked={false} disabled />
+      </TableCell>
+      {columns.map((column, columnIndex) => (
+        <TableCell
+          key={column.dataKey + rowIndex}
+          align={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? 'left' : 'center'}
+          style={{
+            padding: '0px',
+            margin: '0px',
+            borderBottom: 'none',
+          }}
+        >
+          {columnIndex === columns.length - 1 ? (
+            <IconButton aria-label="more">
+              {/* <MoreVertIcon style={{ color: 'black' }} /> */}
+            </IconButton>
+          ) : (
+            <span style={column.dataKey === 'title' || column.dataKey === 'uploadedOn' ? textPadding : {}}>
+              {column.dataKey === 'additionalData' ? row.additionalData[columnIndex - 3] : row[column.dataKey]}
+            </span>
+          )}
+          {columnIndex === 10 && <MoreVertIcon />}
+          {columnIndex === 11 && <ChevronRightRoundedIcon />}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
+export default ReactVirtualizedTable;
